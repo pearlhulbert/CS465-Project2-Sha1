@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <math.h>
 
 u_int32_t shaWrapper(u_int64_t nonce, int bitSize);
 double calculateVariance(double*, double);
@@ -52,12 +53,17 @@ int main(int argc, char **argv) {
         for (int i = 0; i < 50; ++i) {
             numAttempts += attempts[i];
         }
+        double expected = pow(2.0, (double)bitSize);
         double average = numAttempts / 50;
         double variance = calculateVariance(attempts, average);
         printf("average number of attempts: %f\n", average);
         printf("min attempts: %f\n", min);
         printf("max attempts: %f\n", max);
         printf("variance: %f\n", variance);
+        FILE* fpt = fopen("preimageData.csv", "w+");
+        fprintf(fpt, "bitSize, average, expected, min, max, variance");
+        fprintf(fpt,"%d, %f, %d, %f, %f, %f\n", bitSize, average, expected, min, max, variance);
+        close(fpt);
     }
     else if (strcmp(argv[1], "-c") == 0) {
         int bitSize = atoi(argv[2]);
@@ -109,12 +115,17 @@ int main(int argc, char **argv) {
         for (int i = 0; i < 50; ++i) {
             numAttempts += attempts[i];
         }
+        double expected = pow(2.0, ((double)bitSize/2));
         double average = numAttempts / 50;
         double variance = calculateVariance(attempts, average);
         printf("average number of attempts: %f\n", average);
         printf("min attempts: %f\n", min);
         printf("max attempts: %f\n", max);
         printf("variance: %f\n", variance);
+         FILE* fpt = fopen("collisionData.csv", "w+");
+        fprintf(fpt, "bitSize, average, expected, min, max, variance");
+        fprintf(fpt,"%d, %f, %d, %f, %f, %f\n", bitSize, average, expected, min, max, variance);
+        close(fpt);
     }
     return 0;
 }
